@@ -16,8 +16,6 @@ const inputFile = "../access-log.json"
 const targetIndex = "bulk-data-test"
 
 func sendBulkRequest(client *http.Client, host, apiKey string, bulkActions []string, withGzip bool) error {
-	url := fmt.Sprintf("https://%s/%s/_bulk", host, targetIndex)
-
 	var buf bytes.Buffer
 	var bodyWriter io.Writer
 
@@ -35,7 +33,7 @@ func sendBulkRequest(client *http.Client, host, apiKey string, bulkActions []str
 		t.Close()
 	}
 
-	req, err := http.NewRequest("POST", url, &buf)
+	req, err := http.NewRequest("POST", fmt.Sprintf("https://%s/%s/_bulk", host, targetIndex), &buf)
 	if err != nil {
 		return fmt.Errorf("failed to construct request: %w", err)
 	}
@@ -93,7 +91,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Took %vs\n\n", time.Since(start))
+	fmt.Printf("Took %v\n\n", time.Since(start))
 
 	fmt.Println("Sending regular bulk request")
 	start = time.Now()
@@ -101,5 +99,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Took %vs\n", time.Since(start))
+	fmt.Printf("Took %v\n", time.Since(start))
 }
